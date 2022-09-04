@@ -21,17 +21,6 @@ def find_files(filename, search_path):
 ## print(find_files(args.transaction, os.getcwd()))
 
 
-#import spark
-from pyspark.sql import SparkSession
-# Create a spark session (which will run spark jobs)
-spark = (
-    SparkSession.builder.appName("MAST30034 ass2 BNPL group 28")
-    .config("spark.sql.repl.eagerEval.enabled", True) 
-    .config("spark.sql.parquet.cacheMetadata", "true")
-    .config("spark.sql.session.timeZone", "Etc/UTC")
-    .getOrCreate()
-)
-
 search_path = os.getcwd()
 
 merchants = spark.read.parquet(find_files(args.merchant, search_path))
