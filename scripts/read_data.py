@@ -1,12 +1,22 @@
 import argparse
 import os
+#import spark
+from pyspark.sql import SparkSession
+# Create a spark session (which will run spark jobs)
+spark = (
+    SparkSession.builder.appName("MAST30034 ass2 BNPL group 28")
+    .config("spark.sql.repl.eagerEval.enabled", True) 
+    .config("spark.sql.parquet.cacheMetadata", "true")
+    .config("spark.sql.session.timeZone", "Etc/UTC")
+    .getOrCreate()
+)
 
 
 parser = argparse.ArgumentParser(description='process some files')
-parser.add_argument('--merchant')
-parser.add_argument('--consumerid')
-parser.add_argument('--consumer_info')
-parser.add_argument('--transaction')
+parser.add_argument('--merchant', metavar = "file", help="This is the merchant file name you need to input)")
+parser.add_argument('--consumerid', metavar = "file", help="This is the consumer parquet file name you need to input")
+parser.add_argument('--consumer_info', metavar = "file", help="This is the consumer csv file name you need to input")
+parser.add_argument('--transaction', metavar = "file", help="This is the transaction file name you need to input")
 args = parser.parse_args()
 
 
@@ -32,9 +42,11 @@ consumers_csv = spark.read.options(header='True', inferSchema='True', delimiter=
 consumers_csv = consumers_csv.withColumnRenamed("name", "user_name")
 merchants = merchants.withColumnRenamed("name", "merchant_name")
 
+# Join multiple dataframes into a single
 new_transaction = transactions.join(consumers, transactions.user_id == consumers.user_id, "leftouter").drop(consumers.user_id)
 new_transaction = new_transaction.join(merchants, new_transaction.merchant_abn == merchants.merchant_abn, "leftouter").drop(merchants.merchant_abn)
 new_transaction = new_transaction.join(consumers_csv, new_transaction.consumer_id == consumers_csv.consumer_id, "leftouter").drop(consumers_csv.consumer_id)
 
+# Store the Dataframe after joining process in both csv and parquet format
 new_transaction.write.mode('overwrite').option("header",True).csv(find_files('curated',search_path = search_path)+'/full_data.csv')
 new_transaction.write.mode('overwrite').option("header",True).parquet(find_files('curated',search_path = search_path)+'/full_data.parquet')
