@@ -13,7 +13,7 @@ spark = (
 
 
 parser = argparse.ArgumentParser(description='process some files')
-parser.add_argument('--merchant', metavar = "file", help="This is the merchant file name you need to input)")
+parser.add_argument('--merchant', metavar = "file", help="This is the merchant file name you need to input")
 parser.add_argument('--consumerid', metavar = "file", help="This is the consumer parquet file name you need to input")
 parser.add_argument('--consumer_info', metavar = "file", help="This is the consumer csv file name you need to input")
 parser.add_argument('--transaction', metavar = "file", help="This is the transaction file name you need to input")
