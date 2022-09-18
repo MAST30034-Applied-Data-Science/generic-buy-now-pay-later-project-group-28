@@ -56,5 +56,10 @@ else:
     urlretrieve(f"https://www.abs.gov.au/statistics/standards/australian-statistical-geography-standard-asgs-edition-3/jul2021-jun2026/access-and-downloads/correspondences/CG_SA2_{start_year}_SA2_{end_year}.csv", raw_data_path + sa2_1621corr_name)
 
 # Download POA to SA2 correspondence zip
-poa_sa2_name = "poa_sa2.zip"
-urlretrieve(f"https://www.abs.gov.au/AUSSTATS/subscriber.nsf/log?openagent&1270055006_CG_POSTCODE_{corr_year}_SA2_{corr_year}.zip&1270.0.55.006&Data%20Cubes&70A3CE8A2E6F9A6BCA257A29001979B2&0&July%202011&27.06.2012&Latest", raw_data_path + poa_sa2_name)
+poa_sa2_name = f"poa_sa2_{corr_year}.zip"
+if (corr_year == '2011'):
+    # Download 2011 correspondence zip
+    urlretrieve(f"https://www.abs.gov.au/AUSSTATS/subscriber.nsf/log?openagent&1270055006_CG_POSTCODE_{corr_year}_SA2_{corr_year}.zip&1270.0.55.006&Data%20Cubes&70A3CE8A2E6F9A6BCA257A29001979B2&0&July%202011&27.06.2012&Latest", raw_data_path + poa_sa2_name)
+else:
+    # Download 2016 correspondence zip
+    urlretrieve(f"https://data.gov.au/data/dataset/23fe168c-09a7-42d2-a2f9-fd08fbd0a4ce/resource/951e18c7-f187-4c86-a73f-fcabcd19af16/download/asgs{corr_year}_{corr_year}gridcorrespondences.zip", raw_data_path + poa_sa2_name)
