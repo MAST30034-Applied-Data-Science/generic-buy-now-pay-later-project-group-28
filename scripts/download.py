@@ -1,6 +1,3 @@
-
-
-
 import argparse
 import os
 from urllib.request import urlretrieve
@@ -54,6 +51,11 @@ else:
     #download the poa correspondense 2016 to 2021 data
     sa2_1621corr_name = f"sa2_{start_year}_{end_year}.csv"
     urlretrieve(f"https://www.abs.gov.au/statistics/standards/australian-statistical-geography-standard-asgs-edition-3/jul2021-jun2026/access-and-downloads/correspondences/CG_SA2_{start_year}_SA2_{end_year}.csv", raw_data_path + sa2_1621corr_name)
+    
+    #download the external data
+    sa2_external_name = f"sa2_{end_year}_external.zip"
+    urlretrieve(f"https://www.abs.gov.au/census/find-census-data/datapacks/download/{end_year}_GCP_SA2_for_AUS_short-header.zip", raw_data_path + sa2_external_name)
+    
 
 # Download POA to SA2 correspondence zip
 poa_sa2_name = f"poa_sa2_{corr_year}.zip"
