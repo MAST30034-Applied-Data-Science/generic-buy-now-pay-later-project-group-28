@@ -2,7 +2,8 @@ import argparse
 import os
 import numpy as np
 from pyspark.sql.functions import *
-from pyspark.sql.types import FloatType
+from pyspark.sql.types import *
+from pyspark.sql.window import Window
 from pyspark.sql import SparkSession
 import builtins
 from cmath import nan
@@ -199,9 +200,68 @@ new_transaction = new_transaction.withColumn("is_fraud", \
 
 
 ## -----------------------------------------------------------------------------------------------------------------------------------------------
-## Write files
+## Save curated transction file
 ## -----------------------------------------------------------------------------------------------------------------------------------------------
 
 ## Store the Dataframe after joining process in both csv and parquet format
 new_transaction.write.mode('overwrite').option("header",True).csv(find_files('curated',search_path = search_path)+'/full_data.csv')
 # new_transaction.write.mode('overwrite').option("header",True).parquet(find_files('curated',search_path = search_path)+'/full_data.parquet')
+
+
+## -----------------------------------------------------------------------------------------------------------------------------------------------
+## Analyze curated transction file to summary merchant information
+## Save the merchant information to file "merchant_info.csv"
+## -----------------------------------------------------------------------------------------------------------------------------------------------
+
+## format the curated dataset properly
+curated_csv = new_transaction.withColumn('dollar_value', new_transaction.dollar_value.cast(FloatType())) \
+    .withColumn('avg_personal_income_weekly', new_transaction.avg_personal_income_weekly.cast(FloatType())) \
+        .withColumn('take_rate', new_transaction.take_rate.cast(FloatType())) \
+            .withColumn('total_population', new_transaction.total_population.cast(IntegerType())) \
+                .withColumn('is_fraud', when(new_transaction.is_fraud == 'False', 0).otherwise(1))
+
+## Count the number of transactions made by each merchant.
+merchant_transction_count = curated_csv.groupBy('merchant_abn').count()
+merchant_transction_count = merchant_transction_count.withColumnRenamed('count', 'transaction_count')
+
+## Total revenue of a merchant in a given time
+merchant_revenue = curated_csv.groupBy('merchant_abn', 'field', 'take_rate', 'revenue_level') \
+    .sum('dollar_value') \
+        .withColumnRenamed('sum(dollar_value)', "total_revenue")
+        
+from pyspark.sql.functions import round
+merchant_revenue = merchant_revenue.withColumn("total_revenue", round(merchant_revenue["total_revenue"], 2))
+
+## Count the number of Fraud transaction of each merchant
+merchant_fraud_count = curated_csv.groupBy('merchant_abn').sum('is_fraud').withColumnRenamed('sum(is_fraud)', 'fraud_count')
+
+## Calculate mean income of all consumers of each merchant.
+merchant_consumer_income = curated_csv.groupBy('merchant_abn', 'postcode','avg_personal_income_weekly').count()
+
+merchant_consumer_income = merchant_consumer_income.groupBy('merchant_abn') \
+    .agg(sum(col('avg_personal_income_weekly')*col('count'))/sum('count')) \
+        .withColumnRenamed('(sum((avg_personal_income_weekly * count)) / sum(count))', 'mean_consumer_income')
+
+## calculate the number of possible hidden customers of each merchant
+merchant_main_customers = curated_csv.groupBy('merchant_abn','postcode','total_population').count()
+merchant_main_customers = merchant_main_customers.withColumnRenamed('count', 'postcode_count')
+
+windowDept = Window.partitionBy("merchant_abn").orderBy(col("postcode_count").desc())
+
+# Rank the popular customer from area for each merchant
+merchant_main_customers = merchant_main_customers.withColumn("row",row_number().over(windowDept))
+
+# Filter the top 5 popular area
+merchant_main_customers = merchant_main_customers.filter(col("row") <= 5)
+
+merchant_main_customers = merchant_main_customers.groupBy('merchant_abn').sum('total_population') \
+    .withColumnRenamed('sum(total_population)', 'main_business_area_popu')
+
+## join all above sub-datasets
+merchant_info = merchant_transction_count.join(merchant_revenue, ['merchant_abn']) \
+    .join(merchant_consumer_income, ['merchant_abn']) \
+        .join(merchant_fraud_count, ['merchant_abn']) \
+            .join(merchant_main_customers, ['merchant_abn'])
+
+## Save the merchant info
+merchant_info.write.mode('overwrite').option("header",True).csv(find_files('curated',search_path = search_path)+'/merchant_info.csv')
