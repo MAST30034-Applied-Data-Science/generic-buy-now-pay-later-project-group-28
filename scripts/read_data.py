@@ -208,9 +208,6 @@ new_transaction.write.mode('overwrite').option("header",True).csv(find_files('cu
 # new_transaction.write.mode('overwrite').option("header",True).parquet(find_files('curated',search_path = search_path)+'/full_data.parquet')
 
 
-# new_transaction.write.mode('overwrite').option("header",True).parquet(find_files('curated',search_path = search_path)+'/full_data.parquet')
-
-
 ## -----------------------------------------------------------------------------------------------------------------------------------------------
 ## Analyze curated transction file to summary merchant information
 ## Save the merchant information to file "merchant_info.csv"
