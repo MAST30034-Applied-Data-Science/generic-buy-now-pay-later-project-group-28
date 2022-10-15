@@ -150,7 +150,7 @@ top_n_merchant.to_csv((find_files('curated',search_path = search_path)+'/top100.
 score_criteria_shoe = { \
     'transaction_count': {'a':8, 'b': 6, 'c': 4, 'd': 2, 'e': 0}, \
         'take_rate': {'a':4, 'b': 3, 'c': 2, 'd': 1, 'e': 0}, \
-            'revenue_level': {'a':0, 'b': 1, 'c': 2, 'd': 3, 'e': 4}, \
+            'revenue_level': {'a':4, 'b': 3, 'c': 2, 'd': 1, 'e': 0}, \
                 'total_revenue': {'a': 4, 'b': 3, 'c': 2, 'd': 1, 'e': 0}, \
                     'mean_consumer_income': {'a':4, 'b': 3.5, 'c': 3, 'd': 2.5, 'e': 2}, \
                         'fraud_count': {'a':0, 'b': 0, 'c': 0, 'd': 0, 'e': 0}, \
@@ -165,7 +165,7 @@ top_10_merchant_shoe_designed.to_csv(find_files('curated',search_path = search_p
 score_criteria_tents = { \
     'transaction_count': {'a':8, 'b': 6, 'c': 4, 'd': 2, 'e': 0}, \
         'take_rate': {'a':40, 'b': 30, 'c': 20, 'd': 10, 'e': 0}, \
-            'revenue_level': {'a':0, 'b': 1, 'c': 2, 'd': 3, 'e': 4}, \
+            'revenue_level': {'a':4, 'b': 3, 'c': 2, 'd': 1, 'e': 0}, \
                 'total_revenue': {'a': 8, 'b': 6, 'c': 4, 'd': 2, 'e': 0}, \
                     'mean_consumer_income': {'a':4, 'b': 3, 'c': 2, 'd': 1, 'e': 0}, \
                         'fraud_count': {'a':0, 'b': 0, 'c': 0, 'd': 0, 'e': 0}, \
@@ -179,7 +179,7 @@ top_10_merchant_tents_designed.to_csv(find_files('curated',search_path = search_
 score_criteria_jewlery = { \
     'transaction_count': {'a':8, 'b': 6, 'c': 4, 'd': 2, 'e': 0}, \
         'take_rate': {'a':8, 'b': 6, 'c': 4, 'd': 2, 'e': 0}, \
-            'revenue_level': {'a':0, 'b': 1, 'c': 2, 'd': 3, 'e': 4}, \
+            'revenue_level': {'a':4, 'b': 3, 'c': 2, 'd': 1, 'e': 0}, \
                 'total_revenue': {'a': 6, 'b': 4.5, 'c': 3, 'd': 1.5, 'e': 0}, \
                     'mean_consumer_income': {'a':8, 'b': 6, 'c': 4, 'd': 2, 'e': 0}, \
                         'fraud_count': {'a':0, 'b': 0, 'c': 0, 'd': 0, 'e': 0}, \
