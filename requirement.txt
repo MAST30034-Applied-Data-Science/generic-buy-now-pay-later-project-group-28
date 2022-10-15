@@ -1,0 +1,14 @@
+This ranking system requires the following packages
+
+''pandas, pyspark, argparse, sklearn, os, urllib, zipfile, numpy, matplotlib, builtin and cmath
+''run pip install pandas to install pandas
+''run pip install pyspark to install pyspark
+''run pip install argparse to install argparse
+''run pip install zipfile36, and if sys.version_info >= (3, 6):
+    import zipfile
+else:
+    import zipfile36 as zipfile
+
+''run pip install numpy to install numpy
+''run pip install matplotlib to install matplotlib
+''urllib,os are default library in python, no need to download.
